@@ -118,7 +118,7 @@ const PerformanceWidgets = ({ user, platforms }) => {
           const json = await res.json();
           if (json.success && json.profile) {
             const rating = json.current_rating || 0;
-            const ratingChange = 0; // The new API doesn't provide rating history
+            const ratingChange = 0;
             data.codechef = {
               platformName: "CodeChef",
               username: platform.username,
@@ -131,9 +131,7 @@ const PerformanceWidgets = ({ user, platforms }) => {
         }
       } catch (err) {
         console.error(`Error fetching ${platform.platformUrl} data:`, err);
-        setError(
-          `Failed to fetch data for ${platform.platformUrl}. The API may be down or the handle is incorrect.`
-        );
+        setError(`Failed to fetch data for ${platform.platformUrl}.`);
       }
     }
 
@@ -187,20 +185,25 @@ const PerformanceWidgets = ({ user, platforms }) => {
     );
   }
 
+  const renderedPlatforms = Object.values(platformData);
+
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap gap-4 justify-between items-center">
-        <h2 className="text-2xl font-bold">Performance Stats</h2>
-        <div className="flex items-center gap-4">
+    <div className="space-y-4 md:space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* FIX: Title is now hidden on mobile and appears on larger screens */}
+        <h2 className="hidden md:block text-xl md:text-2xl font-bold">
+          Performance Stats
+        </h2>
+        <div className="flex items-center gap-4 self-end md:self-auto w-full md:w-auto justify-between">
           {lastUpdated && !loading && (
-            <span className="text-sm text-gray-500">
+            <span className="text-xs md:text-sm text-gray-500">
               Last updated: {format(lastUpdated, "p")}
             </span>
           )}
           <button
             onClick={fetchAllData}
             disabled={loading}
-            className="bg-sky-600 hover:bg-sky-500 disabled:bg-gray-500 disabled:cursor-wait text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
+            className="bg-sky-600 hover:bg-sky-500 disabled:bg-gray-500 disabled:cursor-wait text-white font-bold py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-2 text-sm"
           >
             {loading ? (
               <svg
@@ -237,7 +240,9 @@ const PerformanceWidgets = ({ user, platforms }) => {
                 />
               </svg>
             )}
-            {loading ? "Refreshing..." : "Refresh"}
+            <span className="hidden md:inline">
+              {loading ? "Refreshing..." : "Refresh"}
+            </span>
           </button>
         </div>
       </div>
@@ -246,24 +251,29 @@ const PerformanceWidgets = ({ user, platforms }) => {
         <p className="bg-red-500/20 text-red-400 p-3 rounded mb-4">{error}</p>
       )}
 
-      {loading && Object.keys(platformData).length === 0 ? (
+      {loading && renderedPlatforms.length === 0 ? (
         <div className="card-bg p-8 rounded-lg text-center">
           Loading performance data...
         </div>
-      ) : Object.keys(platformData).length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
-          {platformData.codeforces && (
-            <RatingCard {...platformData.codeforces} />
-          )}
-          {platformData.leetcode && <RatingCard {...platformData.leetcode} />}
-          {platformData.codechef && <RatingCard {...platformData.codechef} />}
+      ) : renderedPlatforms.length > 0 ? (
+        <div className="md:grid md:grid-cols-2 md:gap-8">
+          <div className="flex overflow-x-auto space-x-4 pb-4 md:contents">
+            {renderedPlatforms.map((platform) => (
+              <div
+                key={platform.platformName}
+                className="flex-shrink-0 w-4/5 snap-center md:w-auto"
+              >
+                <RatingCard {...platform} />
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         !loading && (
           <div className="card-bg p-8 rounded-lg">
             <p className="text-gray-400 mt-4">
-              Could not fetch any data for the provided handles. Please check
-              them and try refreshing.
+              Could not fetch any data. Please check your handles and try
+              refreshing.
             </p>
           </div>
         )

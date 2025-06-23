@@ -20,7 +20,6 @@ const DashboardPage = () => {
       }
       setLoading(true);
       try {
-        // Fetch user profile and platform handles in parallel
         const [profileRes, platformsRes] = await Promise.all([
           axios.get(`${API_URL}/users/${user.id}`),
           axios.get(`${API_URL}/users/${user.id}/platforms`),
@@ -44,10 +43,12 @@ const DashboardPage = () => {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
-        <h1 className="text-5xl font-bold">Dashboard</h1>
+        {/* FIX: Reduced title size on mobile for a more compact look */}
+        <h1 className="text-3xl md:text-5xl font-bold">Dashboard</h1>
         {profile && (
           <div className="flex items-center gap-4">
-            <p className="text-xl text-gray-400">
+            {/* FIX: Reduced welcome message size on mobile */}
+            <p className="text-base md:text-xl text-gray-400">
               Welcome,{" "}
               <span className="font-bold text-sky-400">
                 {profile.firstName}

@@ -26,15 +26,17 @@ const ContestListCard = ({ contest }) => {
       className="block p-4 rounded-lg bg-gray-800/50 hover:bg-gray-700/70 transition-colors"
     >
       <div className="flex justify-between items-center">
-        <div>
+        <div className="overflow-hidden pr-2">
           <span className="font-semibold text-sky-400 text-sm">
             {platformName}
           </span>
-          <h4 className="font-bold text-md">{contest.event}</h4>
+          {/* Responsive Contest Title */}
+          <h4 className="font-bold text-base truncate">{contest.event}</h4>
           {duration && <p className="text-xs text-gray-400 mt-1">{duration}</p>}
         </div>
-        <div className="text-right">
-          <p className="font-mono text-lg">
+        <div className="text-right flex-shrink-0">
+          {/* Responsive Start Time */}
+          <p className="font-mono text-base">
             {formatInIST(contest.start, true)}
           </p>
           <p className="text-xs text-gray-400">Starts</p>
@@ -67,7 +69,6 @@ const TodaysContests = () => {
       setLoading(true);
       setError("");
 
-      // Try to load from cache
       try {
         const cachedItem = localStorage.getItem(cacheKey);
         if (cachedItem) {
@@ -82,7 +83,6 @@ const TodaysContests = () => {
         console.error("Failed to read from cache", e);
       }
 
-      // Fetch from API
       try {
         const platforms = [
           "leetcode.com",
@@ -90,7 +90,6 @@ const TodaysContests = () => {
           "codechef.com",
           "atcoder.jp",
         ];
-        // Fetch all platforms in parallel
         const requests = platforms.map((p) =>
           fetch(
             `${CONTEST_API_URL}?username=${CONTEST_USERNAME}&api_key=${CONTEST_API_KEY}&resource=${p}&upcoming=true&format=json`
