@@ -40,7 +40,6 @@ const SettingsPage = ({ setCurrentPage }) => {
   const handleProfileChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
-
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setSuccess("");
@@ -49,6 +48,7 @@ const SettingsPage = ({ setCurrentPage }) => {
       await axios.patch(`${API_URL}/users/${user.id}`, {
         firstName: profile.firstName,
         lastName: profile.lastName,
+        profileUpdate: true, // Flag to indicate this is a profile update
       });
       setSuccess("Profile updated successfully!");
       setTimeout(() => setSuccess(""), 3000); // Clear message after 3 seconds
